@@ -1,0 +1,12 @@
+{
+  "name": "globalconnect",
+  "version": "1.0.0",
+  "description": "GlobalConnect - Revolutionary Multi-Language Marketplace Chat with AI Translation",
+  "scripts": {
+    "start": "npx serve -l 3000 .",
+    "generate-pdf": "node generate-pdf.js"
+  },
+  "devDependencies": {
+    "puppeteer": "^24.43.1"
+  }
+}
