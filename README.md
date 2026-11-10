@@ -120,3 +120,4 @@ Navigate to **[http://localhost:3000/app.html](http://localhost:3000/app.html)**
 ## 📄 License
 
 MIT License • Built for the **Nexconn Build Challenge 2026**.
+
