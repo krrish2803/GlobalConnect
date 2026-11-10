@@ -552,11 +552,8 @@
         </div>
 
         <div class="top-actions">
-            <a href="index.html" class="btn-link">← Return to Landing Page</a>
-            <div style="font-size: 0.78rem; color: #4ade80; display: flex; align-items: center; gap: 6px;">
-                <span style="width: 8px; height: 8px; border-radius: 50%; background: #4ade80; display: inline-block;"></span>
-                Backend API Connected
-            </div>
+            <span id="signedInUser" style="font-size: 0.78rem; color: var(--color-muted);">Checking session…</span>
+            <button class="btn-link" onclick="signOut()" style="background: none; border: 0; cursor: pointer; font: inherit;">Sign out</button>
         </div>
     </header>
 
@@ -612,8 +609,8 @@
                     <div class="chat-header-user">
                         <div class="chat-avatar">TK</div>
                         <div>
-                            <div style="font-weight: 700; font-size: 0.92rem;">Tariq Al-Mansoor (Buyer) ⟷ Marco Rossi (Seller)</div>
-                            <div style="font-size: 0.72rem; color: var(--color-dim);">Nexconn Real-Time Channel: #order-9821 • Sub-60ms Dual-View Enabled</div>
+                            <div id="appConversationTitle" style="font-weight: 700; font-size: 0.92rem;">Tariq Al-Mansoor (Buyer) ⟷ Marco Rossi (Seller)</div>
+                            <div style="font-size: 0.72rem; color: var(--color-dim);">Sample order conversation: GC-9821 • Translation preview</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
@@ -854,9 +851,36 @@
 
     <!-- App Scripts -->
     <script>
+        async function initializeWorkspace() {
+            try {
+                const response = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+                if (!response.ok) {
+                    window.location.replace('/auth.html?next=%2Fapp.html');
+                    return;
+                }
+                const { user } = await response.json();
+                const label = document.getElementById('signedInUser');
+                label.textContent = `${user.name} · ${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}`;
+                label.setAttribute('aria-label', `Signed in as ${user.name}, ${user.role}`);
+                document.title = `${user.name} · GlobalConnect Workspace`;
+                const conversationTitle = document.getElementById('appConversationTitle');
+                if (user.role === 'buyer') conversationTitle.textContent = `${user.name} (Buyer) ⟷ Marco Rossi (Seller)`;
+                if (user.role === 'seller') conversationTitle.textContent = `Tariq Al-Mansoor (Buyer) ⟷ ${user.name} (Seller)`;
+                if (user.role === 'agent') switchAppView('agent-inbox');
+            } catch (error) {
+                window.location.replace('/auth.html?next=%2Fapp.html');
+            }
+        }
+
+        async function signOut() {
+            try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); }
+            finally { window.location.replace('/auth.html'); }
+        }
+
         function switchAppView(view) {
             document.querySelectorAll('.role-tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            const activeButton = Array.from(document.querySelectorAll('.role-tab-btn')).find(btn => btn.getAttribute('onclick')?.includes(`'${view}'`));
+            if (activeButton) activeButton.classList.add('active');
 
             const chatCol = document.getElementById('chatColumn');
             const contextCol = document.getElementById('contextColumn');
@@ -1023,6 +1047,8 @@
                 });
             } catch(e) {}
         }
+
+        initializeWorkspace();
     </script>
 </body>
 </html>

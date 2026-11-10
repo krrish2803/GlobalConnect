@@ -15,12 +15,17 @@
 const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
+const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 const WEBHOOK_SECRET = process.env.NEXCONN_WEBHOOK_SECRET || 'gc_live_secret_7f89d023a4';
+const scryptAsync = promisify(crypto.scrypt);
+const authUsersByEmail = new Map();
+const sessions = new Map();
+const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 
 // ==========================================
 // In-Memory Database / State Storage
@@ -116,6 +121,50 @@ function parseJsonBody(req) {
     });
 }
 
+function readCookies(req) {
+    return Object.fromEntries((req.headers.cookie || '').split(';').map(part => {
+        const separator = part.indexOf('=');
+        if (separator < 0) return ['', ''];
+        return [part.slice(0, separator).trim(), decodeURIComponent(part.slice(separator + 1).trim())];
+    }).filter(([key]) => key));
+}
+
+function getSessionUser(req) {
+    const sessionId = readCookies(req).gc_session;
+    if (!sessionId) return null;
+    const session = sessions.get(sessionId);
+    if (!session || session.expiresAt <= Date.now()) {
+        if (sessionId) sessions.delete(sessionId);
+        return null;
+    }
+    const user = db.users[session.userId];
+    if (!user) return null;
+    return { id: user.id, name: user.name, email: user.email || '', role: user.role, lang: user.lang || 'en' };
+}
+
+function setSessionCookie(req, res, sessionId, maxAgeSeconds) {
+    const secure = req.socket.encrypted ? '; Secure' : '';
+    res.setHeader('Set-Cookie', `gc_session=${encodeURIComponent(sessionId)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${maxAgeSeconds}${secure}`);
+}
+
+function createSession(req, res, user) {
+    const sessionId = crypto.randomBytes(32).toString('hex');
+    sessions.set(sessionId, { userId: user.id, expiresAt: Date.now() + SESSION_TTL_MS });
+    setSessionCookie(req, res, sessionId, SESSION_TTL_MS / 1000);
+    return { id: user.id, name: user.name, email: user.email || '', role: user.role, lang: user.lang || 'en' };
+}
+
+async function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+    const derivedKey = await scryptAsync(password, salt, 64);
+    return { salt, hash: derivedKey.toString('hex') };
+}
+
+async function verifyPassword(password, salt, expectedHash) {
+    const actual = await scryptAsync(password, salt, 64);
+    const expected = Buffer.from(expectedHash, 'hex');
+    return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+}
+
 // ==========================================
 // HTTP Server & Router
 // ==========================================
@@ -134,6 +183,74 @@ const server = http.createServer(async (req, res) => {
     const pathname = parsedUrl.pathname;
 
     try {
+        // --- Authentication (prototype accounts + in-memory sessions) ---
+        if (req.method === 'POST' && pathname === '/api/auth/signup') {
+            const body = await parseJsonBody(req);
+            const name = String(body.name || '').trim();
+            const email = String(body.email || '').trim().toLowerCase();
+            const password = String(body.password || '');
+            const role = String(body.role || 'buyer').toLowerCase();
+
+            if (name.length < 2 || name.length > 80) {
+                return sendJson(res, 400, { error: 'Enter a name between 2 and 80 characters.' });
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+                return sendJson(res, 400, { error: 'Enter a valid email address.' });
+            }
+            if (password.length < 8 || password.length > 128) {
+                return sendJson(res, 400, { error: 'Password must be between 8 and 128 characters.' });
+            }
+            if (!['buyer', 'seller', 'agent'].includes(role)) {
+                return sendJson(res, 400, { error: 'Choose a valid workspace role.' });
+            }
+            if (authUsersByEmail.has(email)) {
+                return sendJson(res, 409, { error: 'An account with that email already exists. Sign in instead.' });
+            }
+
+            const credentials = await hashPassword(password);
+            const id = `${role}_${crypto.randomUUID().replace(/-/g, '').slice(0, 12)}`;
+            const user = {
+                id,
+                name,
+                email,
+                role,
+                lang: role === 'buyer' ? 'ar' : 'en',
+                trustScore: 100,
+                passwordSalt: credentials.salt,
+                passwordHash: credentials.hash
+            };
+            db.users[id] = user;
+            authUsersByEmail.set(email, id);
+            const safeUser = createSession(req, res, user);
+            return sendJson(res, 201, { success: true, user: safeUser, prototype: true });
+        }
+
+        if (req.method === 'POST' && pathname === '/api/auth/login') {
+            const body = await parseJsonBody(req);
+            const email = String(body.email || '').trim().toLowerCase();
+            const password = String(body.password || '');
+            const userId = authUsersByEmail.get(email);
+            const user = userId && db.users[userId];
+            if (!user || !await verifyPassword(password, user.passwordSalt, user.passwordHash)) {
+                return sendJson(res, 401, { error: 'Email or password is incorrect.' });
+            }
+            const safeUser = createSession(req, res, user);
+            return sendJson(res, 200, { success: true, user: safeUser, prototype: true });
+        }
+
+        if (req.method === 'GET' && pathname === '/api/auth/me') {
+            const user = getSessionUser(req);
+            if (!user) return sendJson(res, 401, { error: 'Sign in to continue.' });
+            return sendJson(res, 200, { user, prototype: true });
+        }
+
+        if (req.method === 'POST' && pathname === '/api/auth/logout') {
+            const sessionId = readCookies(req).gc_session;
+            if (sessionId) sessions.delete(sessionId);
+            setSessionCookie(req, res, '', 0);
+            return sendJson(res, 200, { success: true });
+        }
+
         // --- 1. Health Endpoint ---
         if (req.method === 'GET' && pathname === '/api/health') {
             return sendJson(res, 200, {
@@ -146,35 +263,23 @@ const server = http.createServer(async (req, res) => {
             });
         }
 
-        // --- 2. Token Issuance Endpoint ---
-        // Generates authenticated Nexconn Chat SDK user tokens
+        // --- 2. Nexconn token placeholder ---
+        // Do not mint JWT-shaped values here: Nexconn tokens must come from Nexconn's Server API.
         if (req.method === 'POST' && pathname === '/api/auth/token') {
-            const body = await parseJsonBody(req);
-            const userId = body.userId || 'buyer_dubai_12';
-            const user = db.users[userId] || { id: userId, role: body.role || 'buyer', name: 'User' };
-
-            const tokenHeader = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-            const tokenPayload = Buffer.from(JSON.stringify({
-                sub: user.id,
-                role: user.role,
-                name: user.name,
-                iss: 'globalconnect.nexconn.ai',
-                exp: Math.floor(Date.now() / 1000) + (3600 * 24)
-            })).toString('base64url');
-
-            const tokenSig = crypto.createHmac('sha256', WEBHOOK_SECRET)
-                .update(`${tokenHeader}.${tokenPayload}`)
-                .digest('base64url');
-
-            const jwt = `${tokenHeader}.${tokenPayload}.${tokenSig}`;
-
-            return sendJson(res, 200, {
-                success: true,
-                user: user,
-                token: jwt,
-                expiresIn: 86400,
-                serverUrl: 'https://api.nexconn.ai'
+            return sendJson(res, 501, {
+                error: 'Nexconn token issuance is not configured.',
+                detail: 'Authenticate the GlobalConnect account first, then configure Nexconn Server API token issuance.'
             });
+        }
+
+        const requiresWorkspaceSession =
+            pathname === '/api/translate' ||
+            pathname === '/api/moderate' ||
+            pathname.startsWith('/api/escrow/') ||
+            pathname === '/api/escrow/action' ||
+            pathname === '/api/dispute/mediate';
+        if (requiresWorkspaceSession && !getSessionUser(req)) {
+            return sendJson(res, 401, { error: 'Sign in to use workspace features.' });
         }
 
         // --- 3. Translation & Cultural Context Engine ---
@@ -374,6 +479,16 @@ const server = http.createServer(async (req, res) => {
         }
 
         // --- 8. Static File Server (Serves index.html and assets) ---
+        const currentUser = getSessionUser(req);
+        if (req.method === 'GET' && pathname === '/app.html' && !currentUser) {
+            res.writeHead(302, { Location: '/auth.html?next=%2Fapp.html', 'Cache-Control': 'no-store' });
+            return res.end();
+        }
+        if (req.method === 'GET' && pathname === '/auth.html' && currentUser) {
+            res.writeHead(302, { Location: '/app.html', 'Cache-Control': 'no-store' });
+            return res.end();
+        }
+
         let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
         
         // Security check: stay within workspace

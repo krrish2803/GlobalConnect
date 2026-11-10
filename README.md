@@ -92,12 +92,16 @@ GlobalConnect/
 node server.js
 ```
 Open **[http://localhost:3000](http://localhost:3000)** in your browser to view the interactive landing page.  
-Navigate to **[http://localhost:3000/app.html](http://localhost:3000/app.html)** for the dedicated marketplace workspace and agent inbox.
+Choose **Try the conversation demo** or **Explore the demo** to create an account or sign in, then continue to the marketplace workspace. The workspace is protected by a session cookie. Prototype accounts and sessions are held in memory and reset when the server restarts; use a unique demo password.
 
 ### 2. Available API Endpoints
 
 - `GET  /api/health` — System status and active orders.
-- `POST /api/auth/token` — Issue authenticated Nexconn user tokens.
+- `POST /api/auth/signup` — Create a prototype account and start a session.
+- `POST /api/auth/login` — Sign in to an existing prototype account.
+- `GET  /api/auth/me` — Return the current session user.
+- `POST /api/auth/logout` — End the current session.
+- `POST /api/auth/token` — Nexconn token issuance placeholder (returns 501 until real Nexconn server-side issuance is configured).
 - `POST /api/translate` — Real-time translation with cultural context mode.
 - `POST /api/moderate` — Security filter for phone, email, and off-platform link masking.
 - `GET  /api/escrow/:orderId` — Inspect milestone escrow state and ledger history.
