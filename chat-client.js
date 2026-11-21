@@ -49,6 +49,10 @@ function initializeChatUI() {
     NCEngine.initialize({
         appKey: window.NEXCONN_APP_KEY,
         areaCode: AreaCode.SG,
+        // Explicitly target the Singapore navigation service for this app.
+        // Without this, the SDK may use automatic region discovery and never
+        // receive the correct bootstrap configuration in restricted networks.
+        naviServer: 'https://nav.sg-light-edge.com',
         logLevel: LogLevel.WARN
     });
 
@@ -165,7 +169,15 @@ async function openOrder(orderId) {
             initializeChatUI();
 
             if (connectedUserId !== identity.userId) {
-                const connection = await NCEngine.connect({ token: identity.token });
+                let connectionTimeout;
+                const connection = await Promise.race([
+                    NCEngine.connect({ token: identity.token }),
+                    new Promise((_, reject) => {
+                        connectionTimeout = setTimeout(() => reject(new Error(
+                            'Nexconn did not respond in 20 seconds. Check your network or Singapore chat endpoint.'
+                        )), 20000);
+                    })
+                ]).finally(() => clearTimeout(connectionTimeout));
                 if (!connection.isOk) throw new Error(`Nexconn connection failed (${connection.code}).`);
                 connectedUserId = identity.userId;
             }

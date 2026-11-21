@@ -91,15 +91,16 @@ function resetForTests() {
 // Response headers
 // ---------------------------------------------------------------------------
 
-// The workspace loads Three.js from cdnjs, fonts from Google Fonts, and opens
-// Nexconn chat sockets to *.rongnav.com / *.rongcfg.com.
+// The workspace loads Three.js from cdnjs and fonts from Google Fonts.
+// Nexconn's Singapore navigation and IM services use light-edge.com domains;
+// retain the rongnav/rongcfg hosts for endpoints returned by the bootstrap API.
 const CSP = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob:",
-    "connect-src 'self' https://cdnjs.cloudflare.com https://*.rongnav.com wss://*.rongnav.com https://*.rongcfg.com wss://*.rongcfg.com",
+    "connect-src 'self' https://cdnjs.cloudflare.com https://nav.sg-light-edge.com https://nav-b.sg-light-edge.com https://*.light-edge.com wss://*.light-edge.com https://api.sg-light-api.com https://api-b.sg-light-api.com https://*.rongnav.com wss://*.rongnav.com https://*.rongcfg.com wss://*.rongcfg.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
