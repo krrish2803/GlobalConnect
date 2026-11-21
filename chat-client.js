@@ -90,6 +90,25 @@ function initializeChatUI() {
     sdkInitialized = true;
 }
 
+function checkChatBrowserSupport() {
+    if (!window.isSecureContext || !window.crypto?.subtle) {
+        throw new Error('Nexconn Chat needs a secure browser context. Open GlobalConnect at localhost or an HTTPS address.');
+    }
+
+    try {
+        // Safari can throw "The operation is insecure" when site storage is
+        // disabled. Nexconn uses browser storage during SDK initialization.
+        const storage = window.localStorage;
+        const key = '__globalconnect_nexconn_storage_check__';
+        const previous = storage.getItem(key);
+        storage.setItem(key, 'ok');
+        if (previous === null) storage.removeItem(key);
+        else storage.setItem(key, previous);
+    } catch (_) {
+        throw new Error('Safari is blocking site storage for this page. Allow website data/cookies for localhost, then reload and reopen Nexconn Chat.');
+    }
+}
+
 function redactBeforeNexconnSend(value) {
     let text = String(value || '');
     const original = text;
@@ -156,8 +175,13 @@ async function openOrder(orderId) {
     currentOrderId = orderId;
     if (openingPromise) return openingPromise;
     openingPromise = (async () => {
+        let connectionStep = 'Preparing the conversation';
         setStatus('Connecting to Nexconn…', 'connecting');
         try {
+            connectionStep = 'Checking Safari security and storage';
+            checkChatBrowserSupport();
+
+            connectionStep = 'Requesting a Nexconn chat session';
             const response = await fetch(`/api/nexconn/chat-session?orderId=${encodeURIComponent(orderId)}`, {
                 credentials: 'same-origin',
                 cache: 'no-store'
@@ -166,9 +190,11 @@ async function openOrder(orderId) {
             if (!response.ok) throw new Error(identity.error || 'Could not prepare the Nexconn conversation.');
 
             window.NEXCONN_APP_KEY = identity.appKey;
+            connectionStep = 'Initializing Nexconn Chat';
             initializeChatUI();
 
             if (connectedUserId !== identity.userId) {
+                connectionStep = 'Connecting to Nexconn Singapore';
                 let connectionTimeout;
                 const connection = await Promise.race([
                     NCEngine.connect({ token: identity.token }),
@@ -182,6 +208,7 @@ async function openOrder(orderId) {
                 connectedUserId = identity.userId;
             }
 
+            connectionStep = 'Opening the order conversation';
             let opened = await chatUI.openChannel(new DirectChannelIdentifier(identity.peer.userId), true);
             if (!opened.isOk && opened.code === 39005) {
                 setStatus('Syncing conversations…', 'connecting');
@@ -192,7 +219,7 @@ async function openOrder(orderId) {
             setStatus(`Connected · ${identity.peer.name}`, 'connected');
         } catch (error) {
             console.error('[Nexconn Chat]', error);
-            setStatus(error.message || 'Nexconn Chat could not connect.', 'error');
+            setStatus(`${connectionStep}: ${error.message || 'Nexconn Chat could not connect.'}`, 'error');
         } finally {
             openingPromise = null;
         }
