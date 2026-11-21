@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 .npm/
+chat-client.bundle.js
+db/*.db
+db/*.db-*
 
 # Logs
 *.log

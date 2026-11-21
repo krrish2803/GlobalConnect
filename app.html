@@ -10,30 +10,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --paper: #f8f7f4;
+            --paper: #F4EDE0;
             --paper-card: #ffffff;
-            --paper-tint: #edf2ea;
-            --ink: #14251f;
+            --paper-tint: #F4EDE0;
+            --ink: #14213D;
             --ink-muted: #5e6f66;
             --ink-dim: #88978e;
-            --line: #dfe5dc;
+            --line: #E2D8C8;
             --line-subtle: #ebf0e8;
-            --green: #173f32;
-            --green-dark: #0f2b22;
-            --green-light: #235946;
-            --green-hover: #1c493a;
-            --lime: #d7ef9b;
-            --lime-soft: #edf6e9;
-            --gold: #d7a75b;
-            --terracotta: #a63a2d;
-            --terracotta-soft: #fcf1f0;
+            --green: #14213D;
+            --green-dark: #101a30;
+            --green-light: #263d68;
+            --green-hover: #263d68;
+            --lime: #FF6B5B;
+            --lime-soft: #FCE1DC;
+            --gold: #FF6B5B;
+            --terracotta: #FF6B5B;
+            --terracotta-soft: #FCE1DC;
             --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --display: Manrope, 'DM Sans', sans-serif;
             --arabic: 'Alexandria', 'Noto Sans Arabic', system-ui, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            --shadow-sm: 0 1px 3px rgba(20, 37, 31, 0.04);
-            --shadow-md: 0 4px 14px rgba(20, 37, 31, 0.07);
-            --shadow-lg: 0 16px 48px rgba(20, 37, 31, 0.12);
+            --shadow-sm: 0 1px 3px rgba(20, 33, 61, 0.04);
+            --shadow-md: 0 4px 14px rgba(20, 33, 61, 0.07);
+            --shadow-lg: 0 16px 48px rgba(20, 33, 61, 0.12);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -94,7 +94,7 @@
             font-weight: 700;
             color: var(--green);
             background: var(--paper-tint);
-            border: 1px solid #d4ded1;
+            border: 1px solid #D8CDBB;
             padding: 2px 8px;
             border-radius: 99px;
             text-transform: uppercase;
@@ -131,7 +131,7 @@
         .role-tab-btn.active {
             background: #ffffff;
             color: var(--green);
-            box-shadow: 0 2px 6px rgba(20, 37, 31, 0.08);
+            box-shadow: 0 2px 6px rgba(20, 33, 61, 0.08);
         }
 
         /* 1-Tap Fast Persona Switcher */
@@ -140,7 +140,7 @@
             align-items: center;
             gap: 4px;
             background: #f1f5ef;
-            border: 1px solid #d8e2d4;
+            border: 1px solid #D8CDBB;
             padding: 3px;
             border-radius: 8px;
         }
@@ -219,7 +219,7 @@
         /* Left Navigation / Sidebar - Deep Slate Forest */
         .app-sidebar {
             width: 310px;
-            background: linear-gradient(180deg, #102d24 0%, #0c2019 100%);
+            background: linear-gradient(180deg, #101a30 0%, #101a30 100%);
             color: #ffffff;
             border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
@@ -282,8 +282,8 @@
 
         .channel-item.active {
             background: rgba(215, 239, 155, 0.12);
-            border: 1px solid #d7ef9b;
-            border-left: 4px solid #d7ef9b;
+            border: 1px solid #FF6B5B;
+            border-left: 4px solid #FF6B5B;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
         }
 
@@ -347,6 +347,35 @@
             border-right: 1px solid var(--line);
         }
 
+        .chat-mode-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            background: var(--paper-card);
+            border-bottom: 1px solid var(--line-subtle);
+        }
+        .chat-mode-tab {
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 7px 12px;
+            background: transparent;
+            color: var(--ink-muted);
+            font: 700 .72rem var(--sans);
+            cursor: pointer;
+        }
+        .chat-mode-tab:hover { background: var(--paper-tint); color: var(--green); }
+        .chat-mode-tab.active { background: var(--green); color: #fff; }
+        .chat-connection-status { margin-left: auto; color: var(--ink-dim); font-size: .68rem; }
+        .nexconn-chat-panel { flex: 1; min-height: 0; padding: 12px; background: var(--paper); }
+        .nexconn-chat-panel[hidden] { display: none; }
+        .nexconn-chat-mount { width: 100%; height: 100%; min-height: 320px; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-card); }
+        .nexconn-chat-mount nc-chat-ui-app-provider { display: block; width: 100%; height: 100%; min-height: 320px; }
+        .chat-column.nexconn-mode .chat-stream,
+        .chat-column.nexconn-mode .chat-input-bar { display: none; }
+        .chat-column.nexconn-mode .nexconn-chat-panel { display: flex; }
+        .chat-column:not(.nexconn-mode) .nexconn-chat-panel { display: none; }
+
         .chat-column-header {
             padding: 14px 24px;
             border-bottom: 1px solid var(--line);
@@ -391,10 +420,10 @@
         /* Dual-Pane Message Card */
         .msg-dual-card {
             background: #ffffff;
-            border: 1px solid #dfe5dc;
+            border: 1px solid #E2D8C8;
             border-radius: 12px;
             padding: 18px 22px;
-            box-shadow: 0 2px 8px rgba(20, 37, 31, 0.03);
+            box-shadow: 0 2px 8px rgba(20, 33, 61, 0.03);
             position: relative;
         }
 
@@ -453,7 +482,7 @@
             font-family: var(--font-mono);
             color: var(--green);
             background: var(--lime-soft);
-            border: 1px solid #c2dfc9;
+            border: 1px solid #E2D8C8;
             padding: 1px 7px;
             border-radius: 99px;
             font-weight: 700;
@@ -470,7 +499,7 @@
             font-family: var(--arabic);
             font-size: 1.05rem;
             line-height: 1.75;
-            color: #122820;
+            color: #101a30;
             text-align: right;
             direction: rtl;
         }
@@ -484,7 +513,7 @@
             border-left: 3px solid var(--green);
             padding: 8px 12px;
             border-radius: 6px;
-            color: #1a4133;
+            color: #263d68;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -629,7 +658,7 @@
 
         .chip-btn {
             background: #ffffff;
-            border: 1px solid #d4ded1;
+            border: 1px solid #D8CDBB;
             color: var(--green);
             padding: 4px 10px;
             border-radius: 6px;
@@ -671,7 +700,7 @@
             align-items: center;
             gap: 12px;
             background: #ffffff;
-            border: 1.5px solid #d4ded1;
+            border: 1.5px solid #D8CDBB;
             border-radius: 10px;
             padding: 6px 8px 6px 16px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
@@ -736,7 +765,7 @@
             border: 1px solid var(--line);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(20, 37, 31, 0.03);
+            box-shadow: 0 2px 8px rgba(20, 33, 61, 0.03);
         }
 
         .card-header-label {
@@ -763,7 +792,7 @@
             height: 52px;
             border-radius: 10px;
             background: var(--paper-tint);
-            border: 1px solid #d4ded1;
+            border: 1px solid #D8CDBB;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -876,7 +905,7 @@
         .step-bubble.pending {
             background: #f1f4ee;
             color: var(--ink-dim);
-            border: 1.5px solid #d4ded1;
+            border: 1.5px solid #D8CDBB;
         }
 
         .btn-release-main {
@@ -1019,7 +1048,7 @@
             align-items: center;
             justify-content: center;
             min-height: 440px;
-            background: radial-gradient(circle at center, #173f32 0%, #0d261e 100%);
+            background: radial-gradient(circle at center, #14213D 0%, #0d261e 100%);
         }
 
         #arCanvas {
@@ -1038,8 +1067,8 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #d7ef9b, #7caa57, #d7ef9b, transparent);
-            box-shadow: 0 0 15px #d7ef9b, 0 0 30px #d7ef9b;
+            background: linear-gradient(90deg, transparent, #FF6B5B, #7caa57, #FF6B5B, transparent);
+            box-shadow: 0 0 15px #FF6B5B, 0 0 30px #FF6B5B;
             opacity: 0;
             pointer-events: none;
             z-index: 5;
@@ -1224,6 +1253,91 @@
             border-color: var(--green);
             background: var(--paper-tint);
         }
+        @media (max-width: 700px) {
+            .chat-mode-toolbar { padding: 8px 12px; gap: 4px; }
+            .chat-mode-tab { padding: 7px 9px; font-size: .66rem; }
+            .chat-connection-status { font-size: .6rem; }
+            .nexconn-chat-panel { padding: 8px; }
+        }
+
+        /* Focused, product-like workspace polish */
+        .app-topbar { gap: 20px; padding-inline: 24px; }
+        .brand-subtext { color: var(--ink-muted); background: #f7f3eb; border-color: var(--line); }
+        .role-tabs { background: #f7f3eb; border-color: var(--line); border-radius: 10px; }
+        .role-tab-btn { padding: 8px 12px; font-size: .74rem; }
+        .top-persona-switch { position: relative; display: block; background: transparent; border: 0; padding: 0; }
+        #demoPersonaSwitcher[hidden] { display: none; }
+        .top-persona-switch > summary { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink-muted); background: #fff; cursor: pointer; list-style: none; font-size: .72rem; font-weight: 700; }
+        .top-persona-switch > summary::-webkit-details-marker { display: none; }
+        .top-persona-switch > summary span { color: var(--ink); }
+        .persona-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 25; display: none; min-width: 190px; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 12px 32px rgba(20,33,61,.16); }
+        .top-persona-switch[open] .persona-menu { display: grid; }
+        .persona-menu .persona-tab-btn { width: 100%; text-align: left; padding: 9px 10px; }
+        .persona-menu .persona-tab-btn.active { background: var(--ink); color: white; }
+        .persona-tab-btn { padding: 7px 10px; }
+        .app-sidebar { width: 254px; background: #f8f4ec; color: var(--ink); border-right: 1px solid var(--line); }
+        .app-sidebar::after { display: none; }
+        .sidebar-section-title { padding: 22px 18px 12px; color: var(--ink-muted); font-size: .64rem; letter-spacing: .12em; }
+        .sidebar-section-title { display: flex; align-items: center; justify-content: space-between; }
+        .sidebar-count { min-width: 24px; padding: 3px 7px; border-radius: 999px; background: #fff; color: var(--ink); font: 700 .62rem var(--font-mono); text-align: center; letter-spacing: 0; }
+        .channel-list { padding: 6px 12px 18px; gap: 8px; }
+        .channel-item { border-radius: 12px; padding: 13px 12px; background: rgba(255,255,255,.62); border: 1px solid transparent; }
+        .channel-item:hover { background: #fff; border-color: var(--line); }
+        .channel-item.active { background: #fff; color: var(--ink); border: 1px solid #ead9ce; border-left: 3px solid var(--terracotta); box-shadow: 0 5px 18px rgba(20,33,61,.06); }
+        .channel-name { font-size: .79rem; color: var(--ink); }
+        .channel-time { color: var(--ink-dim); }
+        .channel-preview { color: var(--ink-muted); font-size: .71rem; }
+        .channel-item .badge-pill[style*="rgba(255, 255, 255"] { background: #eef0f2 !important; color: var(--ink-muted) !important; }
+        .chat-column { border-color: var(--line); background: #fbfaf7; }
+        .chat-column-header { min-height: 78px; padding: 14px 28px; box-shadow: none; }
+        .chat-header-user > div:last-child > div:last-child { color: var(--ink-muted) !important; }
+        .chat-stream { padding: 28px 34px; gap: 14px; align-items: center; background: #fbfaf7; }
+        .chat-stream > * { width: min(100%, 1080px); }
+        .msg-dual-card, .deal-card { border-radius: 15px; box-shadow: 0 7px 25px rgba(20,33,61,.045); }
+        .deal-card { padding: 14px 18px; }
+        .deal-card-header { margin-bottom: 0; }
+        .deal-details { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 9px; }
+        .deal-details summary { color: var(--ink-muted); font-size: .76rem; font-weight: 700; cursor: pointer; list-style-position: inside; }
+        .deal-details[open] summary { margin-bottom: 9px; }
+        .deal-details .deal-terms-list { padding-left: 18px; line-height: 1.75; }
+        .deal-details .deal-actions { margin-top: 10px; }
+        .context-column { width: 332px; padding: 20px 18px; gap: 13px; background: #f2ecdf; border-left: 1px solid #e7ddcc; }
+        .context-card { padding: 18px; border-radius: 15px; box-shadow: 0 5px 20px rgba(20,33,61,.045); }
+        .card-header-label { margin-bottom: 12px; }
+        .nexconn-launch { min-height: 40px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--ink); color: white; font: 700 .76rem var(--sans); cursor: pointer; box-shadow: 0 4px 12px rgba(20,33,61,.14); transition: transform .18s, background .18s; }
+        .nexconn-launch:hover { transform: translateY(-1px); background: #22385f; }
+        .nexconn-launch .launch-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; background: #83d6a4; box-shadow: 0 0 0 3px rgba(131,214,164,.16); }
+        .nexconn-backdrop { position: fixed; inset: 0; z-index: 30; background: rgba(20,33,61,.15); backdrop-filter: blur(2px); }
+        .nexconn-backdrop[hidden] { display: none; }
+        .nexconn-chat-panel { position: fixed; z-index: 31; right: 28px; bottom: 24px; width: min(980px, calc(100vw - 56px)); height: min(780px, calc(100vh - 48px)); min-height: 500px; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: #fff; border: 1px solid rgba(20,33,61,.13); border-radius: 18px; box-shadow: 0 24px 80px rgba(20,33,61,.24); }
+        .nexconn-chat-panel[hidden] { display: none; }
+        body .chat-column .nexconn-chat-panel:not([hidden]) { display: flex; }
+        .nexconn-popup-head { height: 64px; flex: 0 0 64px; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--line); background: #fff; }
+        .nexconn-popup-title { font: 800 .9rem var(--display); color: var(--ink); }
+        .nexconn-popup-meta { margin-top: 3px; color: var(--ink-muted); font-size: .68rem; }
+        .nexconn-close { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink); font-size: 1.15rem; cursor: pointer; }
+        .nexconn-chat-mount { display: flex; flex: 1 1 0; min-width: 0; min-height: 0; height: 0; overflow: hidden; border: 0; border-radius: 0; }
+        .nexconn-chat-mount nc-chat-ui-app-provider { display: block; flex: 1 1 0; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; }
+        #nexconnStatus[data-state="connected"]::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #31a66a; }
+        @media (max-width: 1100px) {
+            .context-column { width: 290px; padding: 14px; }
+            .app-sidebar { width: 220px; }
+            .role-tab-btn { padding-inline: 8px; }
+        }
+        @media (max-width: 760px) {
+            .app-topbar { height: 58px; padding-inline: 12px; gap: 8px; }
+            .brand { font-size: .95rem; gap: 7px; }
+            .brand-subtext, .top-persona-switch, .role-tabs { display: none; }
+            .top-actions { gap: 8px; }
+            .user-pill { padding: 5px 8px; font-size: .68rem; }
+            .app-sidebar { width: 176px; }
+            .context-column { display: none !important; }
+            .chat-column-header { padding: 10px 12px; }
+            .chat-column-header .btn-action { font-size: .66rem; padding: 8px; }
+            .chat-stream { padding: 12px; }
+            .chat-stream > * { width: 100%; }
+            .nexconn-chat-panel { right: 8px; bottom: 8px; width: calc(100vw - 16px); height: min(82vh, 760px); min-height: min(500px, 82vh); }
+        }
 </style>
 </head>
 <body>
@@ -1240,16 +1354,19 @@
         <div class="role-tabs">
             <button class="role-tab-btn active" onclick="switchAppView('chat')">Active Deal Chat</button>
             <button class="role-tab-btn" onclick="switchAppView('ar-inspector')">AR 3D Inspector</button>
-            <button class="role-tab-btn" onclick="switchAppView('agent-inbox')">Agent Support Inbox</button>
+            <button class="role-tab-btn" id="agentInboxTab" onclick="switchAppView('agent-inbox')">Agent Support Inbox</button>
             <button class="role-tab-btn" onclick="switchAppView('analytics')">Marketplace Metrics</button>
         </div>
 
         <!-- 1-Tap Fast Persona Switcher (Zero credential forms) -->
-        <div class="top-persona-switch">
-            <button type="button" class="persona-tab-btn" id="personaBuyerBtn" onclick="quickSwitchPersona('buyer')" title="1-Tap switch to Tariq (Buyer)">👤 Buyer (Tariq)</button>
-            <button type="button" class="persona-tab-btn" id="personaSellerBtn" onclick="quickSwitchPersona('seller')" title="1-Tap switch to Marco (Seller)">🏷️ Seller (Marco)</button>
-            <button type="button" class="persona-tab-btn" id="personaAgentBtn" onclick="quickSwitchPersona('agent')" title="1-Tap switch to Sarah (Agent)">🛡️ Agent (Sarah)</button>
-        </div>
+        <details class="top-persona-switch" id="demoPersonaSwitcher">
+            <summary>Demo role <span id="activeDemoPersona">Buyer</span></summary>
+            <div class="persona-menu">
+                <button type="button" class="persona-tab-btn" id="personaBuyerBtn" onclick="quickSwitchPersona('buyer')" title="1-Tap switch to Tariq (Buyer)">👤 Buyer (Tariq)</button>
+                <button type="button" class="persona-tab-btn" id="personaSellerBtn" onclick="quickSwitchPersona('seller')" title="1-Tap switch to Marco (Seller)">🏷️ Seller (Marco)</button>
+                <button type="button" class="persona-tab-btn" id="personaAgentBtn" onclick="quickSwitchPersona('agent')" title="1-Tap switch to Sarah (Agent)">🛡️ Agent (Sarah)</button>
+            </div>
+        </details>
 
         <div class="top-actions">
             <div class="user-pill">
@@ -1265,42 +1382,8 @@
 
         <!-- Left Channel Sidebar -->
         <aside class="app-sidebar" id="sidebarSection">
-            <div class="sidebar-section-title">Active Deal Channels (Nexconn)</div>
-            <ul class="channel-list">
-                <li class="channel-item active" onclick="loadChannel('GC-9821')">
-                    <div class="channel-item-top">
-                        <span class="channel-name">#GC-9821 • Leather Jacket</span>
-                        <span class="channel-time">14:34</span>
-                    </div>
-                    <div class="channel-preview">Marco Rossi: "Yes, exactly true to European..."</div>
-                    <div style="margin-top: 6px; display: flex; gap: 6px;">
-                        <span class="badge-pill badge-escrow">$249.00 Escrow</span>
-                        <span class="badge-pill" style="background: rgba(255, 255, 255, 0.12); color: #ffffff;">AR / EN</span>
-                    </div>
-                </li>
-                <li class="channel-item" onclick="loadChannel('GC-7740')">
-                    <div class="channel-item-top">
-                        <span class="channel-name">#GC-7740 • Swiss Chrono Watch</span>
-                        <span class="channel-time">Yesterday</span>
-                    </div>
-                    <div class="channel-preview">Buyer: "Does it come with original papers?"</div>
-                    <div style="margin-top: 6px; display: flex; gap: 6px;">
-                        <span class="badge-pill badge-escrow">$1,850.00 Escrow</span>
-                        <span class="badge-pill" style="background: rgba(255, 255, 255, 0.12); color: #ffffff;">DE / EN</span>
-                    </div>
-                </li>
-                <li class="channel-item" onclick="loadChannel('GC-6102')">
-                    <div class="channel-item-top">
-                        <span class="channel-name">#GC-6102 • Silk Kimono Fabric</span>
-                        <span class="channel-time">Oct 22</span>
-                    </div>
-                    <div class="channel-preview">AI Mediator: "Settlement agreement drafted."</div>
-                    <div style="margin-top: 6px; display: flex; gap: 6px;">
-                        <span class="badge-pill badge-dispute">Mediation Active</span>
-                        <span class="badge-pill" style="background: rgba(255, 255, 255, 0.12); color: #ffffff;">JA / EN</span>
-                    </div>
-                </li>
-            </ul>
+            <div class="sidebar-section-title"><span>Order conversations</span><button type="button" onclick="openOrderForm()" style="border:1px solid rgba(255,255,255,.24);border-radius:7px;background:rgba(255,255,255,.1);color:#fff;padding:5px 9px;font:inherit;cursor:pointer">＋ New</button></div>
+            <ul class="channel-list" id="orderChannelList" aria-live="polite"></ul>
         </aside>
 
         <!-- Main Workspace Area -->
@@ -1313,10 +1396,11 @@
                         <div class="chat-avatar">TK</div>
                         <div>
                             <div id="appConversationTitle" style="font-weight: 700; font-size: 0.92rem;">Tariq Al-Mansoor (Buyer) ⟷ Marco Rossi (Seller)</div>
-                            <div style="font-size: 0.72rem; color: var(--color-dim);">Sample order conversation: GC-9821 • Translation preview</div>
+                            <div style="font-size: 0.72rem; color: var(--color-dim);">Order GC-9821 · Arabic ↔ English · Escrow funded</div>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="nexconn-launch" id="nexconnLaunch" type="button" aria-haspopup="dialog" aria-expanded="false" onclick="setChatMode('nexconn')"><span class="launch-dot"></span>Open Nexconn chat</button>
                         <button class="btn-action" style="background: var(--terracotta-soft); color: var(--terracotta); border: 1px solid #eed0ce;" onclick="openDisputeFromApp()">
                             ⚠️ Flag Dispute (Freeze Escrow)
                         </button>
@@ -1349,22 +1433,7 @@
                         </div>
                     </div>
 
-                    <!-- Deal Card (Tier 1 #6) -->
-                    <div class="deal-card">
-                        <div class="deal-card-header">
-                            <span class="deal-card-title">🤝 Proposed Purchase Specification Agreement</span>
-                            <span class="badge-pill badge-escrow">Binding Offer</span>
-                        </div>
-                        <div class="deal-terms-list">
-                            • Item: Vintage Italian Leather Jacket (EU 50 / L)<br>
-                            • Agreed Amount: $249.00 USD (Includes DHL International Courier)<br>
-                            • Inspection Guarantee: 48-hour return window for authenticity verification
-                        </div>
-                        <div class="deal-actions">
-                            <button class="btn-action btn-accept" onclick="alert('Offer Accepted! Terms synchronized with Escrow Ledger.')">Accept Binding Terms</button>
-                            <button class="btn-action btn-counter" onclick="alert('Counter-offer proposal dialog opened.')">Propose Counter-Terms</button>
-                        </div>
-                    </div>
+                    <div id="dealComposerAnchor" style="display:flex;justify-content:flex-end;margin:0 0 14px"><button class="btn-action" onclick="openDealForm()" style="background:#14213D;color:#fff;padding:9px 14px">＋ Propose terms</button></div>
 
                     <!-- Message 2 -->
                     <div class="msg-dual-card">
@@ -1410,6 +1479,14 @@
                         </div>
                     </form>
                 </div>
+                <div class="nexconn-backdrop" id="nexconnBackdrop" hidden onclick="setChatMode('preview')"></div>
+                <section class="nexconn-chat-panel" id="nexconnChatPanel" aria-label="Nexconn conversation" role="dialog" aria-modal="true" aria-labelledby="nexconnPopupTitle" hidden>
+                    <div class="nexconn-popup-head">
+                        <div><div class="nexconn-popup-title" id="nexconnPopupTitle">Nexconn secure chat</div><div class="nexconn-popup-meta" id="nexconnStatus" aria-live="polite">Connecting to your conversation…</div><div class="nexconn-popup-meta">Text messages appear translated in the workspace preview</div></div>
+                        <button class="nexconn-close" type="button" aria-label="Close Nexconn chat" onclick="setChatMode('preview')">×</button>
+                    </div>
+                    <div id="nexconnChatMount" class="nexconn-chat-mount"></div>
+                </section>
             </div>
 
             <!-- Context Right Column -->
@@ -1911,6 +1988,27 @@
         </div>
     </div>
 
+    <dialog id="newOrderDialog" style="width:min(460px,calc(100vw - 32px));border:1px solid #e6dbca;border-radius:18px;padding:0;color:#14213D;box-shadow:0 24px 80px #101a3066">
+        <form id="newOrderForm" style="padding:26px;display:grid;gap:14px">
+            <div><div style="font-size:1.2rem;font-weight:800">Start a deal</div><div style="color:#63736c;font-size:.9rem;margin-top:4px">Create an order channel with your marketplace counterpart.</div></div>
+            <label>Product or service<input name="title" required minlength="3" maxlength="120" placeholder="e.g. Handmade leather bag" style="display:block;width:100%;box-sizing:border-box;padding:11px;border:1px solid #d9d0c3;border-radius:9px;margin-top:6px"></label>
+            <label>SKU or reference<input name="sku" required maxlength="80" placeholder="e.g. BAG-204" style="display:block;width:100%;box-sizing:border-box;padding:11px;border:1px solid #d9d0c3;border-radius:9px;margin-top:6px"></label>
+            <label>Agreed value (USD)<input name="amount" required type="number" min="0.01" step="0.01" placeholder="250.00" style="display:block;width:100%;box-sizing:border-box;padding:11px;border:1px solid #d9d0c3;border-radius:9px;margin-top:6px"></label>
+            <div id="newOrderError" role="alert" style="color:#b33d35;font-size:.88rem"></div>
+            <div style="display:flex;justify-content:flex-end;gap:9px"><button type="button" onclick="document.getElementById('newOrderDialog').close()" style="padding:10px 14px;border:1px solid #ddd3c5;background:white;border-radius:9px;cursor:pointer">Cancel</button><button type="submit" style="padding:10px 16px;border:0;background:#14213D;color:white;border-radius:9px;font-weight:700;cursor:pointer">Create order</button></div>
+        </form>
+    </dialog>
+
+    <dialog id="dealDialog" style="width:min(480px,calc(100vw - 32px));border:1px solid #e6dbca;border-radius:18px;padding:0;color:#14213D;box-shadow:0 24px 80px #101a3066">
+        <form id="dealForm" style="padding:26px;display:grid;gap:14px">
+            <div><div style="font-size:1.2rem;font-weight:800" id="dealDialogTitle">Propose deal terms</div><div style="color:#63736c;font-size:.9rem;margin-top:4px">Write the terms both sides should agree to.</div></div>
+            <label>Offer title<input name="title" required minlength="3" maxlength="120" placeholder="Purchase terms" style="display:block;width:100%;box-sizing:border-box;padding:11px;border:1px solid #d9d0c3;border-radius:9px;margin-top:6px"></label>
+            <label>Terms <span style="color:#63736c;font-weight:400">(one per line)</span><textarea name="terms" required rows="5" placeholder="Item condition and specifications\nPrice and currency\nShipping and inspection window" style="display:block;width:100%;box-sizing:border-box;padding:11px;border:1px solid #d9d0c3;border-radius:9px;margin-top:6px;resize:vertical"></textarea></label>
+            <div id="dealError" role="alert" style="color:#b33d35;font-size:.88rem"></div>
+            <div style="display:flex;justify-content:flex-end;gap:9px"><button type="button" onclick="document.getElementById('dealDialog').close()" style="padding:10px 14px;border:1px solid #ddd3c5;background:white;border-radius:9px;cursor:pointer">Cancel</button><button type="submit" style="padding:10px 16px;border:0;background:#14213D;color:white;border-radius:9px;font-weight:700;cursor:pointer">Send proposal</button></div>
+        </form>
+    </dialog>
+
     <!-- App Scripts -->
     <script>
         async function initializeWorkspace() {
@@ -1922,6 +2020,10 @@
                 }
                 const { user } = await response.json();
                 currentUser = user;
+                const demoStatusResponse = await fetch('/api/auth/demo-login/status', { credentials: 'same-origin', cache: 'no-store' });
+                const demoStatus = demoStatusResponse.ok ? await demoStatusResponse.json() : { enabled: false };
+                const personaSwitcher = document.getElementById('demoPersonaSwitcher');
+                if (personaSwitcher) personaSwitcher.hidden = !demoStatus.enabled;
                 const label = document.getElementById('signedInUser');
                 label.textContent = `${user.name} · ${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}`;
 
@@ -1930,13 +2032,23 @@
                 if (user.role === 'buyer') document.getElementById('personaBuyerBtn')?.classList.add('active');
                 if (user.role === 'seller') document.getElementById('personaSellerBtn')?.classList.add('active');
                 if (user.role === 'agent') document.getElementById('personaAgentBtn')?.classList.add('active');
+                const activeDemoPersona = document.getElementById('activeDemoPersona');
+                if (activeDemoPersona) activeDemoPersona.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+                const agentInboxTab = document.getElementById('agentInboxTab');
+                if (agentInboxTab) agentInboxTab.hidden = user.role !== 'agent';
+                const releaseButton = document.getElementById('wsReleaseBtn');
+                if (releaseButton) releaseButton.hidden = user.role === 'seller';
 
                 label.setAttribute('aria-label', `Signed in as ${user.name}, ${user.role}`);
                 document.title = `${user.name} · GlobalConnect Workspace`;
+                const availableOrders = await refreshOrderChannels();
+                if (!availableOrders.some(order => order.id === currentOrderId) && availableOrders.length) currentOrderId = availableOrders[0].id;
                 if (user.role === 'agent') {
                     switchAppView('agent-inbox');
+                } else if (availableOrders.length) {
+                    loadChannel(currentOrderId);
                 } else {
-                    loadChannel('GC-9821');
+                    document.getElementById('orderChannelList').innerHTML = '<li style="padding:18px;color:#c4d4ca">No order conversations yet. Create one to get started.</li>';
                 }
             } catch (error) {
                 window.location.replace('/auth.html?next=%2Fapp.html');
@@ -1967,6 +2079,21 @@
                 alert('Error switching persona: ' + err.message);
             }
         }
+
+        function setChatMode(mode) {
+            const useNexconn = mode === 'nexconn';
+            const panel = document.getElementById('nexconnChatPanel');
+            const backdrop = document.getElementById('nexconnBackdrop');
+            const launcher = document.getElementById('nexconnLaunch');
+            if (panel) panel.hidden = !useNexconn;
+            if (backdrop) backdrop.hidden = !useNexconn;
+            launcher?.setAttribute('aria-expanded', String(useNexconn));
+            if (useNexconn) window.globalConnectNexconn?.openOrder(currentOrderId);
+        }
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !document.getElementById('nexconnChatPanel')?.hidden) setChatMode('preview');
+        });
 
         async function signOut() {
             try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); }
@@ -2022,8 +2149,127 @@
         let currentEventSource = null;
         let currentUser = null;
 
+        function openOrderForm() {
+            document.getElementById('newOrderError').textContent = '';
+            document.getElementById('newOrderForm').reset();
+            document.getElementById('newOrderDialog').showModal();
+        }
+
+        async function refreshOrderChannels() {
+            const list = document.getElementById('orderChannelList');
+            if (!list) return [];
+            try {
+                const response = await fetch('/api/orders', { credentials: 'same-origin', cache: 'no-store' });
+                if (!response.ok) throw new Error('Unable to load orders.');
+                const { orders = [] } = await response.json();
+                list.innerHTML = orders.map(order => `<li class="channel-item${order.id === currentOrderId ? ' active' : ''}" data-order-id="${escapeHtml(order.id)}" onclick="loadChannel('${escapeHtml(order.id)}')">
+                    <div class="channel-item-top"><span class="channel-name">#${escapeHtml(order.id)} · ${escapeHtml(order.title)}</span><span class="channel-time">${escapeHtml(order.status || 'OPEN')}</span></div>
+                    <div class="channel-preview">${escapeHtml(order.sku || 'Order conversation')} · ${escapeHtml(order.origin || 'Cross-border')} ${order.destination ? `→ ${escapeHtml(order.destination)}` : ''}</div>
+                    <div style="margin-top:6px;display:flex;gap:6px"><span class="badge-pill badge-escrow">${escapeHtml(order.currency || 'USD')} ${(Number(order.amountMinor || 0) / 100).toFixed(2)}</span><span class="badge-pill" style="background:rgba(255,255,255,.12);color:#fff">${escapeHtml(order.status || 'CREATED')}</span></div>
+                </li>`).join('') || '<li style="padding:18px;color:#c4d4ca">No orders yet. Create one to start a deal.</li>';
+                const count = document.querySelector('.sidebar-count');
+                if (count) count.textContent = String(orders.length).padStart(2, '0');
+                return orders;
+            } catch (error) {
+                list.innerHTML = '<li style="padding:18px;color:#ffd0c8">Orders could not be loaded.</li>';
+                return [];
+            }
+        }
+
+        document.getElementById('newOrderForm')?.addEventListener('submit', async event => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const submit = form.querySelector('[type="submit"]');
+            const data = new FormData(form);
+            submit.disabled = true;
+            submit.textContent = 'Creating…';
+            try {
+                const response = await fetch('/api/orders', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: data.get('title'), sku: data.get('sku'), amount: data.get('amount') }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Order could not be created.');
+                document.getElementById('newOrderDialog').close();
+                await refreshOrderChannels();
+                loadChannel(result.order.id);
+            } catch (error) {
+                document.getElementById('newOrderError').textContent = error.message;
+            } finally {
+                submit.disabled = false;
+                submit.textContent = 'Create order';
+            }
+        });
+
+        let counteringDealId = null;
+        function openDealForm(deal = null) {
+            counteringDealId = deal?.id || null;
+            const form = document.getElementById('dealForm');
+            form.reset();
+            document.getElementById('dealError').textContent = '';
+            document.getElementById('dealDialogTitle').textContent = deal ? 'Counter this proposal' : 'Propose deal terms';
+            if (deal) {
+                form.elements.title.value = `Counter: ${deal.title}`;
+                form.elements.terms.value = (deal.terms || []).join('\n');
+            }
+            document.getElementById('dealDialog').showModal();
+        }
+
+        async function refreshDeals(orderId = currentOrderId) {
+            const anchor = document.getElementById('dealComposerAnchor');
+            if (!anchor) return;
+            document.querySelectorAll('[data-live-deal]').forEach(card => card.remove());
+            try {
+                const response = await fetch(`/api/deals?orderId=${encodeURIComponent(orderId)}`, { credentials: 'same-origin', cache: 'no-store' });
+                if (!response.ok) return;
+                const { deals = [] } = await response.json();
+                for (const deal of deals) {
+                    const card = document.createElement('section');
+                    card.className = 'deal-card';
+                    card.dataset.liveDeal = 'true';
+                    const terms = Array.isArray(deal.terms) ? deal.terms : [];
+                    const status = String(deal.status || 'PROPOSED').toUpperCase();
+                    const isOpen = ['PROPOSED', 'COUNTERED'].includes(status);
+                    const isProposer = currentUser?.id === deal.proposed_by || currentUser?.id === deal.proposedBy;
+                    card.innerHTML = `<div class="deal-card-header"><span class="deal-card-title">🤝 ${escapeHtml(deal.title)}</span><span class="badge-pill badge-escrow">${escapeHtml(status)}</span></div><div class="deal-card-body"><ul style="margin:12px 0;padding-left:22px;line-height:1.7">${terms.map(term => `<li>${escapeHtml(term)}</li>`).join('')}</ul><div class="deal-actions">${isOpen && !isProposer ? '<button class="btn-action btn-accept" data-deal-action="accept">Accept terms</button><button class="btn-action btn-counter" data-deal-action="counter">Counter</button><button class="btn-action" data-deal-action="decline">Decline</button>' : ''}${isOpen && isProposer ? '<span style="color:#63736c">Waiting for the other party</span>' : ''}</div></div>`;
+                    card.querySelector('[data-deal-action="accept"]')?.addEventListener('click', () => resolveDeal(deal.id, 'ACCEPTED'));
+                    card.querySelector('[data-deal-action="decline"]')?.addEventListener('click', () => resolveDeal(deal.id, 'REJECTED'));
+                    card.querySelector('[data-deal-action="counter"]')?.addEventListener('click', () => openDealForm({ id: deal.id, title: deal.title, terms }));
+                    anchor.after(card);
+                }
+            } catch (error) {
+                console.warn('Could not load deal proposals', error);
+            }
+        }
+
+        async function resolveDeal(dealId, status) {
+            try {
+                const response = await fetch(`/api/deals/${encodeURIComponent(dealId)}/resolve`, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId, status }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Could not update proposal.');
+                await refreshDeals();
+            } catch (error) { alert(error.message); }
+        }
+
+        document.getElementById('dealForm')?.addEventListener('submit', async event => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const title = form.elements.title.value.trim();
+            const terms = form.elements.terms.value.split('\n').map(term => term.trim()).filter(Boolean).slice(0, 12);
+            try {
+                if (counteringDealId) {
+                    const response = await fetch(`/api/deals/${encodeURIComponent(counteringDealId)}/resolve`, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId, status: 'COUNTERED' }) });
+                    if (!response.ok) { const error = await response.json(); throw new Error(error.error || 'Could not counter proposal.'); }
+                }
+                const response = await fetch('/api/deals', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: currentOrderId, title, terms, counterOf: counteringDealId }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Could not send proposal.');
+                document.getElementById('dealDialog').close();
+                await refreshDeals();
+            } catch (error) { document.getElementById('dealError').textContent = error.message; }
+        });
+
         function loadChannel(orderId) {
             currentOrderId = orderId;
+            document.documentElement.dataset.activeOrderId = orderId;
+            window.globalConnectNexconn?.setOrder(orderId);
 
             // 1. Highlight sidebar item
             document.querySelectorAll('.channel-item').forEach(item => {
@@ -2039,6 +2285,7 @@
 
             // 4. Load message history
             fetchChannelMessages(orderId);
+            refreshDeals(orderId);
         }
 
         async function fetchOrderContext(orderId) {
@@ -2135,7 +2382,8 @@
             currentEventSource.addEventListener('message', (event) => {
                 try {
                     const message = JSON.parse(event.data);
-                    appendMessageCard(message);
+                    if (message.type === 'deal_update') refreshDeals(currentOrderId);
+                    else appendMessageCard(message);
                 } catch (e) {
                     console.error('Failed to parse SSE message:', e);
                 }
@@ -2176,6 +2424,12 @@
             }
         }
 
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[char]);
+        }
+
         function appendMessageCard(msg, autoScroll = true) {
             const stream = document.getElementById('appChatStream');
             if (!stream) return;
@@ -2183,57 +2437,23 @@
             // Avoid duplicate rendering
             if (msg.id && document.getElementById(msg.id)) return;
 
-            // Deal Card type (Tier 1 #6)
-            if (msg.type === 'deal_card') {
-                const dealCard = document.createElement('div');
-                if (msg.id) dealCard.id = msg.id;
-                dealCard.className = "deal-card";
-                dealCard.innerHTML = `
-                    <div class="deal-card-header">
-                        <span class="deal-card-title">🤝 ${msg.deal?.title || 'Proposed Specification Agreement'}</span>
-                        <span class="badge-pill badge-escrow">${msg.deal?.status || 'Binding Offer'}</span>
-                    </div>
-                    <div class="deal-card-body">
-                        <div class="deal-spec-grid">
-                            <div class="deal-spec-item">
-                                <div class="deal-spec-label">Item & Sizing</div>
-                                <div class="deal-spec-val">Vintage Italian Leather Jacket (EU 50 / L)</div>
-                            </div>
-                            <div class="deal-spec-item">
-                                <div class="deal-spec-label">Agreed Escrow Amount</div>
-                                <div class="deal-spec-val" style="color: var(--green);">$249.00 USD (Includes Courier)</div>
-                            </div>
-                            <div class="deal-spec-item">
-                                <div class="deal-spec-label">Inspection Guarantee</div>
-                                <div class="deal-spec-val">48-Hour Return Window for Authenticity</div>
-                            </div>
-                        </div>
-                        <div class="deal-actions">
-                            <button class="btn-action btn-accept" onclick="executeBindingDeal()">Accept Binding Terms ↗</button>
-                            <button class="btn-action btn-counter" onclick="alert('Counter-offer proposal dialog opened.')">Propose Counter-Terms</button>
-                        </div>
-                    </div>
-                `;
-                stream.appendChild(dealCard);
-                if (autoScroll) stream.scrollTop = stream.scrollHeight;
-                return;
-            }
+            if (msg.type === 'deal_card') { refreshDeals(currentOrderId); return; }
 
             const card = document.createElement('div');
             if (msg.id) card.id = msg.id;
             card.className = "msg-dual-card";
 
-            const senderName = msg.sender?.name || 'Participant';
-            const senderRole = msg.sender?.role ? ` (${msg.sender.role.toUpperCase()})` : '';
+            const senderName = escapeHtml(msg.sender?.name || 'Participant');
+            const senderRole = msg.sender?.role ? ` (${escapeHtml(msg.sender.role.toUpperCase())})` : '';
             const isMasked = Boolean(msg.isMasked);
-            const origText = isMasked ? msg.sanitizedText : msg.originalText;
-            const transText = msg.translation?.translatedText || `"[Translated Output]: ${origText}"`;
+            const origText = escapeHtml(isMasked ? msg.sanitizedText : msg.originalText);
+            const transText = escapeHtml(msg.translation?.translatedText || `"[Translated Output]: ${msg.sanitizedText || msg.originalText}"`);
             const conf = msg.translation?.confidenceScore ? `${(msg.translation.confidenceScore * 100).toFixed(1)}% Conf` : '98.5% Conf';
-            const culturalNote = msg.translation?.culturalAdaptation;
+            const culturalNote = escapeHtml(msg.translation?.culturalAdaptation || '');
             const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now';
 
-            const sourceLang = (msg.sourceLang || 'en').toUpperCase();
-            const targetLang = (msg.targetLang || 'ar').toUpperCase();
+            const sourceLang = escapeHtml((msg.sourceLang || 'en').toUpperCase());
+            const targetLang = escapeHtml((msg.targetLang || 'ar').toUpperCase());
             const isTargetArabic = targetLang === 'AR' || /[\u0600-\u06FF]/.test(transText);
             const isSourceArabic = sourceLang === 'AR' || /[\u0600-\u06FF]/.test(origText);
 
@@ -2343,6 +2563,13 @@
         function renderDisputeAlert(dispute) {
             const stream = document.getElementById('appChatStream');
             const alertCard = document.createElement('div');
+            const settlementControls = currentUser?.role === 'agent'
+                ? `<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">
+                    <button class="btn-action" style="font-size:.74rem;background:rgba(59,130,246,.2);color:#93c5fd;text-align:left;padding:6px 10px" onclick="settleDisputeAction('SETTLE_REFUND')">1. Issue Pre-Paid Return Label (Full Refund)</button>
+                    <button class="btn-action" style="font-size:.74rem;background:rgba(11,194,62,.2);color:#4ade80;text-align:left;padding:6px 10px" onclick="settleDisputeAction('SETTLE_PARTIAL')">2. 20% Courtesy Credit (Keep Item)</button>
+                    <button class="btn-action" style="font-size:.74rem;background:rgba(245,158,11,.2);color:#fde047;text-align:left;padding:6px 10px" onclick="settleDisputeAction('SETTLE_AGENT')">3. Escalate to Certified Bilingual Agent</button>
+                  </div>`
+                : '<p style="font-size:.74rem;color:var(--muted);margin-top:6px">A support agent will review the resolution options.</p>';
             alertCard.className = "msg-dual-card";
             alertCard.style.border = "1px solid #E94560";
             alertCard.style.background = "rgba(233, 69, 96, 0.1)";
@@ -2354,17 +2581,7 @@
                 </div>
                 <div>
                     <div class="msg-lang-tag" style="color: #60a5fa;">Interactive Settlement Proposals</div>
-                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
-                        <button class="btn-action" style="font-size: 0.74rem; background: rgba(59, 130, 246, 0.2); color: #93c5fd; text-align: left; padding: 6px 10px;" onclick="settleDisputeAction('SETTLE_REFUND')">
-                            1. Issue Pre-Paid Return Label (Full Refund)
-                        </button>
-                        <button class="btn-action" style="font-size: 0.74rem; background: rgba(11, 194, 62, 0.2); color: #4ade80; text-align: left; padding: 6px 10px;" onclick="settleDisputeAction('SETTLE_PARTIAL')">
-                            2. 20% Courtesy Credit (Keep Item)
-                        </button>
-                        <button class="btn-action" style="font-size: 0.74rem; background: rgba(245, 158, 11, 0.2); color: #fde047; text-align: left; padding: 6px 10px;" onclick="settleDisputeAction('SETTLE_AGENT')">
-                            3. Escalate to Certified Bilingual Agent
-                        </button>
-                    </div>
+                    ${settlementControls}
                 </div>
             `;
             stream.appendChild(alertCard);
@@ -2389,14 +2606,24 @@
 
         async function releaseWorkspaceEscrow() {
             try {
-                await fetch('/api/escrow/action', {
+                const button = document.getElementById('wsReleaseBtn');
+                if (button?.disabled) return;
+                if (button) { button.disabled = true; button.textContent = 'Updating escrow…'; }
+                const response = await fetch('/api/escrow/action', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'same-origin',
                     body: JSON.stringify({ orderId: currentOrderId, action: 'RELEASE' })
                 });
-            } catch(e) {
-                console.error(e);
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Escrow could not be updated.');
+                await fetchOrderContext(currentOrderId);
+                await refreshOrderChannels();
+            } catch(error) {
+                alert(error.message || 'Escrow could not be updated.');
+                const button = document.getElementById('wsReleaseBtn');
+                if (button) button.disabled = false;
+                await fetchOrderContext(currentOrderId);
             }
         }
 
@@ -2897,6 +3124,7 @@
 
         initializeWorkspace();
     </script>
+    <script type="module" src="/chat-client.bundle.js"></script>
 </body>
 </html>
 

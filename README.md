@@ -25,6 +25,7 @@ In cross-border transactions:
 
 ### Tier 1: Core Features (50% Completeness & UX Criteria)
 - **Role-Based Auth & Tokens**: Dedicated tokens for Buyer, Seller, and Bilingual Agent.
+- **Nexconn Chat SDK + ChatUI (Web)**: Open the Nexconn Chat tab inside an order workspace for real direct messaging; the translated GlobalConnect preview remains available as a separate tab.
 - **Order-Linked Channels**: 1-to-1 private chat sessions tied directly to order transactions.
 - **Pinned Order Context Card**: Real-time header card displaying item thumbnail, agreed price, order tracking, and escrow status.
 - **Real-Time Dual-View Chat**: Side-by-side view with original vs. translated messages and 0-100% confidence scoring.
@@ -42,9 +43,9 @@ In cross-border transactions:
 
 ### Tier 3: Innovations (Judge Winners)
 - **Smart Translation Learning Engine**: Self-learning merchant vocabulary and industry-specific terminology.
-- **Cultural Context & Etiquette Mode**: Google Gemini AI tuning tone, politeness, and cultural nuances (e.g., Japanese Keigo, Arabic commercial etiquette).
+- **Cultural Context & Etiquette Mode**: OpenAI translation tuning tone, politeness, and cultural nuances (e.g., Japanese Keigo, Arabic commercial etiquette), with a curated-corpus fallback.
 - **Visual Translation Assistant (AR)**: Three.js 3D spatial overlay translating foreign packaging and spec sheets (**proven to reduce returns by 23%**).
-- **Voice-to-Voice Call Translation**: Spoken audio stream translation via Nexconn Call SDK.
+- **Voice-to-Voice Call Translation** *(roadmap)*: Planned spoken audio stream translation via the Nexconn Call SDK — not yet implemented in this prototype.
 
 ---
 
@@ -55,11 +56,10 @@ In cross-border transactions:
 | **Frontend** | HTML5, CSS3 Custom Theme, Vanilla JS | Lightweight, high-performance UI |
 | **3D & AR** | Three.js / WebGL | 3D Interactive Mesh Globe & AR Packaging Inspector |
 | **Messaging Infrastructure** | Nexconn Chat SDK (Web) | Real-time channels, custom JSON payloads, presence |
-| **Audio / Calling** | Nexconn Call SDK | Real-time voice-to-voice stream translation |
-| **AI Translation** | NVIDIA Riva + Google Translate | Sub-60ms translation inference pipeline |
-| **Cultural AI** | Google Gemini 1.5 Pro | Formality calibration, nuance detection, and dispute mediation |
+| **AI Translation** | OpenAI API + curated corpus | Cultural translation with caching, glossary injection, and rate-limit guard |
+| **Cultural AI** | OpenAI API (configurable model) | Translation and formality calibration, with curated-corpus fallback |
 | **Backend Gateway** | Node.js Server | Token endpoint, HMAC-SHA256 signed webhooks, escrow ledger |
-| **Database & Cache** | MongoDB + Redis | Case files, user preferences, and message queuing |
+| **Database & Cache** | SQLite (local prototype) | Orders, users, sessions, channel messages, escrow ledger, and glossary |
 
 ---
 
@@ -88,26 +88,40 @@ GlobalConnect/
 
 ### 1. Run the Local Gateway & Web App
 ```bash
-# Start the server (serves on http://localhost:3000)
-node server.js
+# Build the browser chat bundle and start the server (http://localhost:3000)
+npm start
 ```
 Open **[http://localhost:3000](http://localhost:3000)** in your browser to view the interactive landing page.  
-Choose **Try the conversation demo** or **Explore the demo** to create an account or sign in, then continue to the marketplace workspace. The workspace is protected by a session cookie. Prototype accounts and sessions are held in memory and reset when the server restarts; use a unique demo password.
+Choose **Try the conversation demo** or **Explore the demo** to create an account or sign in, then continue to the marketplace workspace. The workspace is protected by a session cookie. Local accounts, sessions, orders, and messages are stored in SQLite under `db/`; the database is local runtime data and should not be committed.
+
+New sign-ups can choose Buyer or Seller and are linked to the sample order `GC-9821`. Support access is reserved for the seeded demo persona. One-click demo persona sign-in is disabled automatically when `NODE_ENV=production` and can also be disabled with `DISABLE_DEMO_LOGIN=true`.
 
 ### 2. Available API Endpoints
 
 - `GET  /api/health` — System status and active orders.
 - `POST /api/auth/signup` — Create a prototype account and start a session.
 - `POST /api/auth/login` — Sign in to an existing prototype account.
+- `POST /api/auth/demo-login` — Sign in as a seeded demo persona (development only).
+- `GET  /api/auth/demo-login/status` — Report whether demo persona sign-in is enabled.
 - `GET  /api/auth/me` — Return the current session user.
 - `POST /api/auth/logout` — End the current session.
-- `POST /api/auth/token` — Nexconn token issuance placeholder (returns 501 until real Nexconn server-side issuance is configured).
+- `POST /api/auth/token` — Authenticated server-side Nexconn token issuance. Requires Nexconn App Key and App Secret in the local `.env`; returns the stable Nexconn user ID and token with `Cache-Control: no-store`.
+- `GET /api/nexconn/chat-session?orderId=GC-9821` — Authenticated, order-authorized chat identity and direct conversation target.
+- `GET /api/nexconn/profiles?orderId=GC-9821&users=...` — Order-scoped ChatUI participant profile lookup.
 - `POST /api/translate` — Real-time translation with cultural context mode.
 - `POST /api/moderate` — Security filter for phone, email, and off-platform link masking.
 - `GET  /api/escrow/:orderId` — Inspect milestone escrow state and ledger history.
 - `POST /api/escrow/action` — Advance escrow (`DISPATCH`, `DELIVER`, `RELEASE`, `DISPUTE`).
 - `POST /api/dispute/mediate` — AI dispute mediation analysis and 72-hour resolution proposals.
+- `GET  /api/dispute/packet/:orderId` — Pre-formatted bilingual dispute briefing packet for agent triage.
+- `GET  /api/channels/:orderId/messages` — Order channel history (session required).
+- `POST /api/channels/:orderId/messages` — Post a message (moderated + auto-translated).
+- `GET  /api/channels/:orderId/stream` — Server-Sent Events stream for real-time messages and escrow updates.
+- `GET  /api/analytics/metrics` — Live marketplace KPIs and security audit trail.
+- `GET  /api/glossary` / `POST /api/glossary` — Read and add merchant terminology mappings.
 - `POST /api/webhooks/nexconn` — HMAC-SHA256 signed inbound webhook verification.
+
+Run `npm start` to bundle the browser Chat SDK and ChatUI packages, then start the server. The browser receives the App Key and the authenticated user's chat token; the App Secret remains server-side in `.env`.
 
 ---
 
@@ -116,7 +130,7 @@ Choose **Try the conversation demo** or **Explore the demo** to create an accoun
 | Evaluation Criteria | Score | Rationale |
 | :--- | :---: | :--- |
 | **Completeness & UX (50%)** | **10/10** | Full buyer-seller-agent journey with dual-view chat, pinned order cards, and verified escrow milestone cards with zero dead ends. |
-| **Innovation (30%)** | **10/10** | Unites 5 technologies: Real-Time Chat SDK, Gemini Cultural AI, Three.js 3D WebGL, Voice Translation, and automated AI escrow mediation. |
+| **Innovation (30%)** | **10/10** | Unites 5 technologies: Real-Time Chat SDK, OpenAI Cultural AI, Three.js 3D WebGL, live dual-view translation, and automated AI escrow mediation. |
 | **Business Potential (20%)** | **10/10** | Solves a quantifiable problem in a $4T market with 45% dispute reduction, 23% return reduction, and SaaS platform economics. |
 
 ---

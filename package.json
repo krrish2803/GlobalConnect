@@ -3,11 +3,20 @@
   "version": "1.0.0",
   "description": "GlobalConnect - Revolutionary Multi-Language Marketplace Chat with AI Translation",
   "scripts": {
-    "start": "node server.js",
+    "start": "npm run build:chat && node server.js",
+    "build:chat": "esbuild chat-client.js --bundle --format=esm --platform=browser --target=es2020 --alias:path=./path-browser-shim.js --outfile=chat-client.bundle.js",
     "test": "node -e \"process.env.PORT = '3456'; const server = require('./server.js'); server.listen(3456, '127.0.0.1', async () => { const { runTests } = require('./test-suite.js'); const ok = await runTests(); server.close(() => process.exit(ok ? 0 : 1)); });\"",
     "generate-pdf": "node generate-pdf.js"
   },
   "devDependencies": {
     "puppeteer": "^24.43.1"
+  },
+  "dependencies": {
+    "@nexconn/chat": "^26.2.1",
+    "@nexconn/chatui": "^26.2.5",
+    "@nexconn/engine": "^26.2.1",
+    "better-sqlite3": "^12.11.1",
+    "esbuild": "^0.28.2",
+    "lit": "^3.3.3"
   }
 }
