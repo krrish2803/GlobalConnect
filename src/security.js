@@ -100,7 +100,7 @@ const CSP = [
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob:",
-    "connect-src 'self' https://cdnjs.cloudflare.com https://nav.sg-light-edge.com https://nav-b.sg-light-edge.com https://*.light-edge.com wss://*.light-edge.com https://api.sg-light-api.com https://api-b.sg-light-api.com https://*.rongnav.com wss://*.rongnav.com https://*.rongcfg.com wss://*.rongcfg.com",
+    "connect-src 'self' https://cdnjs.cloudflare.com https://nav.sg-light-edge.com https://nav-b.sg-light-edge.com https://dualstack-cloudcontrol.sg-light-edge.com https://*.light-edge.com wss://*.light-edge.com https://api.sg-light-api.com https://api-b.sg-light-api.com https://*.rongnav.com wss://*.rongnav.com https://*.rongcfg.com wss://*.rongcfg.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
