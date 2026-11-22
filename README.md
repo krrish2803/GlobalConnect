@@ -94,14 +94,14 @@ npm start
 Open **[http://localhost:3000](http://localhost:3000)** in your browser to view the interactive landing page.  
 Choose **Try the conversation demo** or **Explore the demo** to create an account or sign in, then continue to the marketplace workspace. The workspace is protected by a session cookie. Local accounts, sessions, orders, and messages are stored in SQLite under `db/`; the database is local runtime data and should not be committed.
 
-New sign-ups can choose Buyer or Seller and are linked to the sample order `GC-9821`. Support access is reserved for the seeded demo persona. One-click demo persona sign-in is disabled automatically when `NODE_ENV=production` and can also be disabled with `DISABLE_DEMO_LOGIN=true`.
+New sign-ups can choose Buyer or Seller and are linked to the sample order `GC-9821`. Support access is reserved for the seeded demo persona. One-click demo persona sign-in is disabled by default when `NODE_ENV=production`; set `ENABLE_DEMO_LOGIN=true` to expose the seeded Buyer, Seller, and Agent demo buttons for a public showcase. `DISABLE_DEMO_LOGIN=true` disables them outside production.
 
 ### 2. Available API Endpoints
 
 - `GET  /api/health` — System status and active orders.
 - `POST /api/auth/signup` — Create a prototype account and start a session.
 - `POST /api/auth/login` — Sign in to an existing prototype account.
-- `POST /api/auth/demo-login` — Sign in as a seeded demo persona (development only).
+- `POST /api/auth/demo-login` — Sign in as a seeded demo persona when demo access is enabled.
 - `GET  /api/auth/demo-login/status` — Report whether demo persona sign-in is enabled.
 - `GET  /api/auth/me` — Return the current session user.
 - `POST /api/auth/logout` — End the current session.

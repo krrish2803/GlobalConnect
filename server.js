@@ -65,7 +65,10 @@ function disputes() {
 const PORT = Number(process.env.PORT || 3000);
 const WEBHOOK_SECRET = (process.env.NEXCONN_WEBHOOK_SECRET || '').trim();
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-const DEMO_LOGIN_DISABLED = IS_PRODUCTION || process.env.DISABLE_DEMO_LOGIN === 'true';
+const DEMO_LOGIN_ENABLED = process.env.ENABLE_DEMO_LOGIN === 'true';
+const DEMO_LOGIN_DISABLED = DEMO_LOGIN_ENABLED
+    ? false
+    : (IS_PRODUCTION || process.env.DISABLE_DEMO_LOGIN === 'true');
 const EVIDENCE_DIR = path.join(__dirname, 'uploads', 'evidence');
 const MAX_EVIDENCE_BYTES = 5 * 1024 * 1024;
 
@@ -1029,8 +1032,8 @@ function logBootBanner() {
     console.log(`💬 Nexconn credentials: ${nexconn.isConfigured() ? 'configured' : 'not set (chat disabled)'}`);
     console.log(`🧠 OpenAI translation: ${process.env.OPENAI_API_KEY ? 'configured' : 'corpus/fallback only'}`);
     console.log(`🎭 Demo persona login: ${DEMO_LOGIN_DISABLED ? 'disabled' : 'enabled'}`);
-    if (IS_PRODUCTION && process.env.DISABLE_DEMO_LOGIN !== 'true') {
-        console.warn('⚠️  NODE_ENV=production — demo persona login is disabled.');
+    if (IS_PRODUCTION && DEMO_LOGIN_ENABLED) {
+        console.warn('⚠️  ENABLE_DEMO_LOGIN=true — public visitors can enter seeded demo personas.');
     }
     console.log('=======================================================');
 }
